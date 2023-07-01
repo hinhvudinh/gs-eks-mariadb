@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gsaccessingdatamysql
+spec:
+  selector:
+    matchLabels:
+      app: gsaccessingdatamysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gsaccessingdatamysql
+    spec:
+      containers:
+        - name: gsaccessingdatamysql
+          image: vdhinh/gsaccessingdatamysql:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: vdh-keycloackdb.cxljhvpnpb6j.us-east-2.rds.amazonaws.com
+            - name: DB_NAME
+              value: KeycloakDb
+            - name: DB_USERNAME
+              value: admin
+            - name: DB_PASSWORD
+              value: IcMFMOeCDa
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gsaccessingdatamysql-service
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: gsaccessingdatamysql
+  type: LoadBalancer
